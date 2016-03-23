@@ -18,7 +18,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mParallaxSupportView = (ParallaxSupportView) findViewById(R.id.parallaxSv);
-        mParallaxSupportView.setProvider(new ParallaxProvider());
+        ParallaxProvider provider = new ParallaxProvider();
+        mParallaxSupportView.setProvider(provider);
     }
 
     class ParallaxProvider extends ParallaxSupportView.ParallaxSupportViewProvider<ParallaxProvider.ViewHolder>{

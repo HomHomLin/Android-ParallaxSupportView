@@ -1,6 +1,7 @@
 package homhomlib.lib.parallax.sv;
 
 import android.content.Context;
+import android.database.Observable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -19,16 +20,19 @@ import java.util.Random;
  */
 public class ParallaxSupportView extends FrameLayout {
 
+    private final Random mRandom = new Random();
     private final Handler mHandler;
+
+    private final ParallaxSupportViewDataObserver mObserver = new ParallaxSupportViewDataObserver();
+
     private int mActiveImageIndex = -1;
 
     private SparseArray<ViewHolder> mViewHolders;
 
-    private final Random random = new Random();
+    private boolean mIsAttachedToWindow = false;
+
     private int mSwapMs = 10000;
     private int mFadeInOutMs = 400;
-
-//    private boolean mUseBlur = false;
 
     private float maxScaleFactor = 1.5F;
     private float minScaleFactor = 1.2F;
@@ -47,6 +51,8 @@ public class ParallaxSupportView extends FrameLayout {
 
     public static abstract class ParallaxSupportViewProvider<VH extends ViewHolder>{
 
+        private final AdapterDataObservable mObservable = new AdapterDataObservable();
+
         public abstract VH onCreateViewHolder(int position);
 
         public abstract void onBindViewHolder(VH holder, int position);
@@ -61,11 +67,48 @@ public class ParallaxSupportView extends FrameLayout {
         public final void bindViewHolder(VH holder, int position) {
             onBindViewHolder(holder, position);
         }
+
+        public void notifyDataSetChanged() {
+            mObservable.notifyChanged();
+        }
+
+
+        public void registerAdapterDataObserver(AdapterDataObserver observer) {
+            mObservable.registerObserver(observer);
+        }
+
+        public void unregisterAdapterDataObserver(AdapterDataObserver observer) {
+            mObservable.unregisterObserver(observer);
+        }
+
+
+        public final boolean hasObservers() {
+            return mObservable.hasObservers();
+        }
+
     }
 
     public void setProvider(ParallaxSupportViewProvider provider){
+
+        if(!mIsAttachedToWindow){
+            return;
+        }
+
+        if (mProvider != null) {
+            mProvider.unregisterAdapterDataObserver(mObserver);
+        }
+
         mProvider = provider;
+
+        if (mProvider != null) {
+            mProvider.registerAdapterDataObserver(mObserver);
+        }
+
         viewsInvalid();
+    }
+
+    public ParallaxSupportViewProvider getProvider(){
+        return mProvider;
     }
 
     private Runnable mSwapImageRunnable = new Runnable() {
@@ -99,21 +142,19 @@ public class ParallaxSupportView extends FrameLayout {
         if(mActiveImageIndex == -1) {
             mActiveImageIndex = 0;
             final ViewHolder viewHolder = mViewHolders.get(mActiveImageIndex);
-            mProvider.onBindViewHolder(viewHolder,mActiveImageIndex);
-//            mProvider.onBindViewHolder(viewHolder,mActiveImageIndex);
+            mProvider.bindViewHolder(viewHolder, mActiveImageIndex);
             animate(viewHolder.itemView);
             return;
         }
-
-//        mProvider.onBindViewHolder(viewHolder,i);
 
         int inactiveIndex = mActiveImageIndex;
         mActiveImageIndex = (1 + mActiveImageIndex) % mProvider.getItemCount();
 
         final ViewHolder activeViewHolder = mViewHolders.get(mActiveImageIndex);
-        mProvider.onBindViewHolder(activeViewHolder,mActiveImageIndex);
+        mProvider.bindViewHolder(activeViewHolder, mActiveImageIndex);
+
         final ViewHolder inactiveHolder = mViewHolders.get(inactiveIndex);
-        mProvider.onBindViewHolder(inactiveHolder,inactiveIndex);
+        mProvider.bindViewHolder(inactiveHolder, inactiveIndex);
 
         ViewHelper.setAlpha(activeViewHolder.itemView, 0.0f);
         animate(activeViewHolder.itemView);
@@ -144,14 +185,17 @@ public class ParallaxSupportView extends FrameLayout {
     }
 
     private float pickScale() {
-        return this.minScaleFactor + this.random.nextFloat() * (this.maxScaleFactor - this.minScaleFactor);
+        return this.minScaleFactor + mRandom.nextFloat() * (this.maxScaleFactor - this.minScaleFactor);
     }
 
     private float pickTranslation(int value, float ratio) {
-        return value * (ratio - 1.0f) * (this.random.nextFloat() - 0.5f);
+        return value * (ratio - 1.0f) * (mRandom.nextFloat() - 0.5f);
     }
 
     public void animate(View view) {
+        if(view == null){
+            return;
+        }
         float fromScale = pickScale();
         float toScale = pickScale();
         float fromTranslationX = pickTranslation(view.getWidth(), fromScale);
@@ -177,19 +221,35 @@ public class ParallaxSupportView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        mIsAttachedToWindow = false;
         mHandler.removeCallbacks(mSwapImageRunnable);
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mIsAttachedToWindow = true;
+    }
+
     private void viewsInvalid() {
+
+        mHandler.removeCallbacks(mSwapImageRunnable);
+
+        if(this.getChildCount() > 0){
+            this.removeAllViews();
+        }
+
         if(mProvider == null){
             throw new IllegalArgumentException("provider may not be null");
         }
+
         if(mViewHolders != null){
             mViewHolders.clear();
         }
+
         for (int i = 0; i < mProvider.getItemCount(); i++) {
 
-            ViewHolder viewHolder = mProvider.onCreateViewHolder(i);
+            ViewHolder viewHolder = mProvider.createViewHolder(i);
 
             if(mViewHolders == null){
                 mViewHolders = new SparseArray<>();
@@ -203,6 +263,32 @@ public class ParallaxSupportView extends FrameLayout {
 
         }
         mHandler.post(mSwapImageRunnable);
+    }
+
+    public static abstract class AdapterDataObserver {
+        public void onChanged() {
+        }
+    }
+
+    private class ParallaxSupportViewDataObserver extends AdapterDataObserver {
+        @Override
+        public void onChanged() {
+            //refersh View
+            viewsInvalid();
+        }
+    }
+
+    static class AdapterDataObservable extends Observable<AdapterDataObserver>{
+
+        public boolean hasObservers() {
+            return !mObservers.isEmpty();
+        }
+
+        public void notifyChanged() {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onChanged();
+            }
+        }
     }
 }
 
