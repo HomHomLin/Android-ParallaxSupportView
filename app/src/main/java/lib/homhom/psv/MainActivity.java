@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.htv.setBackgroundResource(R.mipmap.ic_launcher);
+            holder.htv.setBackgroundResource(R.drawable.test);
         }
 
         @Override

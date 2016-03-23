@@ -72,7 +72,7 @@ public class ParallaxSupportView extends FrameLayout {
         @Override
         public void run() {
             swapImage();
-            mHandler.postDelayed(mSwapImageRunnable, mSwapMs - mFadeInOutMs*2);
+            mHandler.postDelayed(mSwapImageRunnable, mSwapMs - mFadeInOutMs * 2);
         }
     };
 
@@ -99,6 +99,7 @@ public class ParallaxSupportView extends FrameLayout {
         if(mActiveImageIndex == -1) {
             mActiveImageIndex = 0;
             final ViewHolder viewHolder = mViewHolders.get(mActiveImageIndex);
+            mProvider.onBindViewHolder(viewHolder,mActiveImageIndex);
 //            mProvider.onBindViewHolder(viewHolder,mActiveImageIndex);
             animate(viewHolder.itemView);
             return;
@@ -110,10 +111,12 @@ public class ParallaxSupportView extends FrameLayout {
         mActiveImageIndex = (1 + mActiveImageIndex) % mProvider.getItemCount();
 
         final ViewHolder activeViewHolder = mViewHolders.get(mActiveImageIndex);
+        mProvider.onBindViewHolder(activeViewHolder,mActiveImageIndex);
         final ViewHolder inactiveHolder = mViewHolders.get(inactiveIndex);
+        mProvider.onBindViewHolder(inactiveHolder,inactiveIndex);
 
         ViewHelper.setAlpha(activeViewHolder.itemView, 0.0f);
-        animate(inactiveHolder.itemView);
+        animate(activeViewHolder.itemView);
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.setDuration(mFadeInOutMs);
@@ -197,8 +200,6 @@ public class ParallaxSupportView extends FrameLayout {
             if(viewHolder != null){
                 this.addView(viewHolder.itemView);
             }
-
-            mProvider.onBindViewHolder(viewHolder,i);
 
         }
         mHandler.post(mSwapImageRunnable);
