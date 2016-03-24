@@ -32,7 +32,7 @@ public class ParallaxSupportView extends FrameLayout {
 
     private boolean mIsAttachedToWindow = false;
 
-    private int mSwapDuration = 10000;
+    private int mParallaxDuration = 10000;
     private int mFadeDuration = 500;
 
     private float mMaxScaleSize = 1.5F;
@@ -148,11 +148,11 @@ public class ParallaxSupportView extends FrameLayout {
         return mProvider;
     }
 
-    private Runnable mSwapImageRunnable = new Runnable() {
+    private Runnable mParallaxImageRunnable = new Runnable() {
         @Override
         public void run() {
             swapImage();
-            mHandler.postDelayed(mSwapImageRunnable, mSwapDuration - mFadeDuration * 2);
+            mHandler.postDelayed(mParallaxImageRunnable, mParallaxDuration - mFadeDuration * 2);
         }
     };
 
@@ -220,12 +220,12 @@ public class ParallaxSupportView extends FrameLayout {
         return mFadeDuration;
     }
 
-    public void setSwapDuration(int duration){
-        mSwapDuration = duration;
+    public void setParallaxDuration(int duration){
+        mParallaxDuration = duration;
     }
 
-    public int getSwapDuration(){
-        return mSwapDuration;
+    public int getParallaxDuration(){
+        return mParallaxDuration;
     }
 
     public void setMinScaleSize(int minScaleSize){
@@ -236,7 +236,7 @@ public class ParallaxSupportView extends FrameLayout {
         mMaxScaleSize = maxScaleSize;
     }
 
-    private void start(View view, long duration, float fromScale, float toScale, float fromTranslationX, float fromTranslationY, float toTranslationX, float toTranslationY) {
+    private void startParallax(View view, long duration, float fromScale, float toScale, float fromTranslationX, float fromTranslationY, float toTranslationX, float toTranslationY) {
         ViewHelper.setScaleX(view, fromScale);
         ViewHelper.setScaleY(view, fromScale);
         ViewHelper.setTranslationX(view, fromTranslationX);
@@ -286,7 +286,7 @@ public class ParallaxSupportView extends FrameLayout {
 //        if(toTranslationY == 0){
 //            toTranslationY = 40;
 //        }
-        start(view, mSwapDuration, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
+        startParallax(view, mParallaxDuration, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
     }
 
     @Override
@@ -297,7 +297,7 @@ public class ParallaxSupportView extends FrameLayout {
     }
 
     private void release(){
-        mHandler.removeCallbacks(mSwapImageRunnable);
+        mHandler.removeCallbacks(mParallaxImageRunnable);
         if(mCopyHolders != null){
             mCopyHolders.clear();
             mCopyHolders = null;
@@ -316,7 +316,7 @@ public class ParallaxSupportView extends FrameLayout {
 
     private void viewsInvalid() {
 
-        mHandler.removeCallbacks(mSwapImageRunnable);
+        mHandler.removeCallbacks(mParallaxImageRunnable);
 
         if(this.getChildCount() > 0){
             this.removeAllViews();
@@ -347,7 +347,7 @@ public class ParallaxSupportView extends FrameLayout {
             mViewHolders.put(type, viewHolder);
         }
 
-        mHandler.post(mSwapImageRunnable);
+        mHandler.post(mParallaxImageRunnable);
     }
 
     public static abstract class AdapterDataObserver {
