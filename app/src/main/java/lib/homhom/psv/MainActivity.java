@@ -13,7 +13,12 @@ public class MainActivity extends AppCompatActivity {
 
     ParallaxSupportView mParallaxSupportView;
     private final static String[] mPic = new String[]{
-
+            "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t1.jpg",
+            "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t2.jpg",
+            "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t3.jpg",
+            "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t4.jpg",
+            "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t5.jpg",
+            "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t6.jpg"
     };
 
     @Override
@@ -29,31 +34,33 @@ public class MainActivity extends AppCompatActivity {
     class ParallaxProvider extends ParallaxSupportView.ParallaxSupportViewProvider<ParallaxProvider.ViewHolder>{
 
         class ViewHolder extends ParallaxSupportView.ViewHolder{
-            public FrescoImageView htv;
+            public FrescoImageView mHtv;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                htv = (FrescoImageView)itemView;
+                mHtv = (FrescoImageView)itemView;
             }
         }
 
         @Override
         public ViewHolder onCreateViewHolder(int position) {
             FrescoImageView htv = new FrescoImageView(MainActivity.this);
-            htv.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            htv.setLayoutParams(new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT));
             htv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             return new ViewHolder(htv);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.htv.loadView("https://avatars1.githubusercontent.com/u/8758713?v=3&s=460", R.mipmap.ic_launcher);
+            holder.mHtv.loadView(mPic[position], R.mipmap.ic_launcher);
 
         }
 
         @Override
         public int getItemCount() {
-            return 3;
+            return mPic.length;
         }
     }
 }
