@@ -90,10 +90,6 @@ public class ParallaxSupportView extends FrameLayout {
 
     public void setProvider(ParallaxSupportViewProvider provider){
 
-        if(!mIsAttachedToWindow){
-            return;
-        }
-
         if (mProvider != null) {
             mProvider.unregisterAdapterDataObserver(mObserver);
         }

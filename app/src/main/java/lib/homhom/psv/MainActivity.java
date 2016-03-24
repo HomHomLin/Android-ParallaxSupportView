@@ -20,32 +20,32 @@ public class MainActivity extends AppCompatActivity {
         mParallaxSupportView = (ParallaxSupportView) findViewById(R.id.parallaxSv);
         ParallaxProvider provider = new ParallaxProvider();
         mParallaxSupportView.setProvider(provider);
+        provider.notifyDataSetChanged();
     }
 
     class ParallaxProvider extends ParallaxSupportView.ParallaxSupportViewProvider<ParallaxProvider.ViewHolder>{
 
         class ViewHolder extends ParallaxSupportView.ViewHolder{
-            public ImageView htv;
+            public FrescoImageView htv;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                htv = (ImageView)itemView;
+                htv = (FrescoImageView)itemView;
             }
         }
 
         @Override
         public ViewHolder onCreateViewHolder(int position) {
-            ImageView htv = new ImageView(MainActivity.this);
-//            FrescoImageView htv = new FrescoImageView(MainActivity.this);
+            FrescoImageView htv = new FrescoImageView(MainActivity.this);
             htv.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
             htv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            htv.loadView("https://avatars1.githubusercontent.com/u/8758713?v=3&s=460",R.mipmap.ic_launcher);
             return new ViewHolder(htv);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.htv.setBackgroundResource(R.drawable.test);
+            holder.htv.loadView("https://avatars1.githubusercontent.com/u/8758713?v=3&s=460", R.mipmap.ic_launcher);
+
         }
 
         @Override
