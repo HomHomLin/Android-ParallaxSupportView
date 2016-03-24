@@ -40,6 +40,8 @@ public class ParallaxSupportView extends FrameLayout {
 
     private ParallaxSupportViewProvider mProvider;
 
+    private AnimInterceptor mAnimInterceptor;
+
     public static abstract class ViewHolder {
         public final View itemView;
         public ViewHolder(View itemView) {
@@ -48,6 +50,10 @@ public class ParallaxSupportView extends FrameLayout {
             }
             this.itemView = itemView;
         }
+    }
+
+    public interface AnimInterceptor{
+        public boolean anim(View view);
     }
 
     public static abstract class ParallaxSupportViewProvider<VH extends ViewHolder>{
@@ -134,6 +140,10 @@ public class ParallaxSupportView extends FrameLayout {
         viewsInvalid();
     }
 
+    public void setAnimInterceptor(AnimInterceptor animInterceptor){
+        mAnimInterceptor = animInterceptor;
+    }
+
     public ParallaxSupportViewProvider getProvider(){
         return mProvider;
     }
@@ -179,6 +189,8 @@ public class ParallaxSupportView extends FrameLayout {
             this.addView(copy_viewHolder.itemView);
         }
 
+        mIndex = (1 + mIndex) % mProvider.getItemCount();
+
         View oldView = this.getChildAt(0);
         View newView = this.getChildAt(1);
 
@@ -198,16 +210,22 @@ public class ParallaxSupportView extends FrameLayout {
                 ObjectAnimator.ofFloat(newView, "alpha", 0.0F, 1.0F)
         );
         animatorSet.start();
-
-        mIndex = (1 + mIndex) % mProvider.getItemCount();
     }
 
     public void setFadeDuration(int duration){
         mFadeDuration = duration;
     }
 
+    public int getFadeDuration(){
+        return mFadeDuration;
+    }
+
     public void setSwapDuration(int duration){
         mSwapDuration = duration;
+    }
+
+    public int getSwapDuration(){
+        return mSwapDuration;
     }
 
     public void setMinScaleSize(int minScaleSize){
@@ -244,6 +262,9 @@ public class ParallaxSupportView extends FrameLayout {
 
     private void animate(View view) {
         if(view == null){
+            return;
+        }
+        if(mAnimInterceptor != null && mAnimInterceptor.anim(view)){
             return;
         }
         float fromScale = pickScale();

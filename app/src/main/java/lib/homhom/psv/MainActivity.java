@@ -11,7 +11,7 @@ import lib.lhh.fiv.library.FrescoImageView;
 
 public class MainActivity extends AppCompatActivity {
 
-    ParallaxSupportView mParallaxSupportView;
+    private ParallaxSupportView mParallaxSupportView;
     private final static String[] mPic = new String[]{
             "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t1.jpg",
             "https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/t2.jpg",
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(int position) {
+        public ViewHolder onCreateViewHolder(int type) {
             FrescoImageView htv = new FrescoImageView(MainActivity.this);
             htv.setLayoutParams(new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
