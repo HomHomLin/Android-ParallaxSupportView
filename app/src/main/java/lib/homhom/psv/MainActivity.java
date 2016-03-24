@@ -12,6 +12,9 @@ import lib.lhh.fiv.library.FrescoImageView;
 public class MainActivity extends AppCompatActivity {
 
     ParallaxSupportView mParallaxSupportView;
+    private final static String[] mPic = new String[]{
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
