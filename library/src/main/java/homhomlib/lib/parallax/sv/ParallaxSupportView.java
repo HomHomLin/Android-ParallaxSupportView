@@ -25,17 +25,18 @@ public class ParallaxSupportView extends FrameLayout {
 
     private final ParallaxSupportViewDataObserver mObserver = new ParallaxSupportViewDataObserver();
 
-    private int mActiveImageIndex = -1;
+    private int mIndex = 0;
 
     private SparseArray<ViewHolder> mViewHolders;
+    private SparseArray<ViewHolder> mCopyHolders;
 
     private boolean mIsAttachedToWindow = false;
 
-    private int mSwapMs = 10000;
-    private int mFadeInOutMs = 400;
+    private int mSwapDuration = 10000;
+    private int mFadeDuration = 500;
 
-    private float maxScaleFactor = 1.5F;
-    private float minScaleFactor = 1.2F;
+    private float mMaxScaleSize = 1.5F;
+    private float mMinScaleSize = 1.0F;
 
     private ParallaxSupportViewProvider mProvider;
 
@@ -53,14 +54,31 @@ public class ParallaxSupportView extends FrameLayout {
 
         private final AdapterDataObservable mObservable = new AdapterDataObservable();
 
-        public abstract VH onCreateViewHolder(int position);
+        private int mItemTypeCount = 1;
+
+        private final static int NO_TYPE = 0;
+
+        public abstract VH onCreateViewHolder(int type);
 
         public abstract void onBindViewHolder(VH holder, int position);
 
         public abstract int getItemCount();
+
+        public int getItemTypeCount(){
+            return mItemTypeCount;
+        }
+
+        /**
+         * 根据pos来确定使用哪个type布局
+         * @param position
+         * @return
+         */
+        public int getItemType(int position){
+            return NO_TYPE;
+        }
         
-        public final VH createViewHolder(int position){
-            final VH holder = onCreateViewHolder(position);
+        public final VH createViewHolder(int type){
+            final VH holder = onCreateViewHolder(type);
             return holder;
         }
 
@@ -88,6 +106,19 @@ public class ParallaxSupportView extends FrameLayout {
 
     }
 
+    public ParallaxSupportView(Context context) {
+        this(context, null);
+    }
+
+    public ParallaxSupportView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public ParallaxSupportView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        mHandler = new Handler();
+    }
+
     public void setProvider(ParallaxSupportViewProvider provider){
 
         if (mProvider != null) {
@@ -111,57 +142,80 @@ public class ParallaxSupportView extends FrameLayout {
         @Override
         public void run() {
             swapImage();
-            mHandler.postDelayed(mSwapImageRunnable, mSwapMs - mFadeInOutMs * 2);
+            mHandler.postDelayed(mSwapImageRunnable, mSwapDuration - mFadeDuration * 2);
         }
     };
 
-    public ParallaxSupportView(Context context) {
-        this(context, null);
-    }
-
-    public ParallaxSupportView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public ParallaxSupportView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        mHandler = new Handler();
-    }
-
     private void swapImage() {
+
         if(mProvider == null){
             return;
         }
+
         if(mProvider.getItemCount() <= 0){
             return;
         }
-        if(mActiveImageIndex == -1) {
-            mActiveImageIndex = 0;
-            final ViewHolder viewHolder = mViewHolders.get(mActiveImageIndex);
-            mProvider.bindViewHolder(viewHolder, mActiveImageIndex);
-            animate(viewHolder.itemView);
+
+        if(this.getChildCount() > 1)
+            this.removeViewAt(0);
+
+        int type = mProvider.getItemType(mIndex);
+
+        ViewHolder viewHolder = mViewHolders.get(type);
+
+        if(viewHolder.itemView.getParent() == null) {
+            mProvider.bindViewHolder(viewHolder, mIndex);
+            this.addView(viewHolder.itemView);
+        }else{
+            if(mCopyHolders == null){
+                mCopyHolders = new SparseArray<>();
+            }
+            ViewHolder copy_viewHolder = mCopyHolders.get(type);
+            if(copy_viewHolder == null){
+                copy_viewHolder = mProvider.createViewHolder(type);
+                mCopyHolders.put(type , copy_viewHolder);
+            }
+            mProvider.bindViewHolder(copy_viewHolder, mIndex);
+            this.addView(copy_viewHolder.itemView);
+        }
+
+        View oldView = this.getChildAt(0);
+        View newView = this.getChildAt(1);
+
+        if(newView == null){
+            //没有新图，说明是第一次
+            animate(oldView);
             return;
         }
 
-        int inactiveIndex = mActiveImageIndex;
-        mActiveImageIndex = (1 + mActiveImageIndex) % mProvider.getItemCount();
-
-        final ViewHolder activeViewHolder = mViewHolders.get(mActiveImageIndex);
-        mProvider.bindViewHolder(activeViewHolder, mActiveImageIndex);
-
-        final ViewHolder inactiveHolder = mViewHolders.get(inactiveIndex);
-        mProvider.bindViewHolder(inactiveHolder, inactiveIndex);
-
-        ViewHelper.setAlpha(activeViewHolder.itemView, 0.0f);
-        animate(activeViewHolder.itemView);
+        ViewHelper.setAlpha(newView, 0.0F);
+        animate(newView);
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.setDuration(mFadeInOutMs);
+        animatorSet.setDuration(mFadeDuration);
         animatorSet.playTogether(
-                ObjectAnimator.ofFloat(inactiveHolder.itemView, "alpha", 1.0f, 0.0f),
-                ObjectAnimator.ofFloat(activeViewHolder.itemView, "alpha", 0.0f, 1.0f)
+                ObjectAnimator.ofFloat(oldView, "alpha", 1.0F, 0.0F),
+                ObjectAnimator.ofFloat(newView, "alpha", 0.0F, 1.0F)
         );
         animatorSet.start();
+
+        mIndex = (1 + mIndex) % mProvider.getItemCount();
+    }
+
+    public void setFadeDuration(int duration){
+        mFadeDuration = duration;
+    }
+
+    public void setSwapDuration(int duration){
+        mSwapDuration = duration;
+    }
+
+    public void setMinScaleSize(int minScaleSize){
+        mMinScaleSize = minScaleSize;
+    }
+
+    public void setMaxScaleSize(int maxScaleSize){
+        mMaxScaleSize = maxScaleSize;
     }
 
     private void start(View view, long duration, float fromScale, float toScale, float fromTranslationX, float fromTranslationY, float toTranslationX, float toTranslationY) {
@@ -181,14 +235,14 @@ public class ParallaxSupportView extends FrameLayout {
     }
 
     private float pickScale() {
-        return this.minScaleFactor + mRandom.nextFloat() * (this.maxScaleFactor - this.minScaleFactor);
+        return mMinScaleSize + mRandom.nextFloat() * (mMaxScaleSize - mMinScaleSize);
     }
 
     private float pickTranslation(int value, float ratio) {
-        return value * (ratio - 1.0f) * (mRandom.nextFloat() - 0.5f);
+        return value * (ratio - 1.0F) * (mRandom.nextFloat() - 0.5F);
     }
 
-    public void animate(View view) {
+    private void animate(View view) {
         if(view == null){
             return;
         }
@@ -211,14 +265,26 @@ public class ParallaxSupportView extends FrameLayout {
 //        if(toTranslationY == 0){
 //            toTranslationY = 40;
 //        }
-        start(view, this.mSwapMs, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
+        start(view, mSwapDuration, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mIsAttachedToWindow = false;
+        release();
+    }
+
+    private void release(){
         mHandler.removeCallbacks(mSwapImageRunnable);
+        if(mCopyHolders != null){
+            mCopyHolders.clear();
+            mCopyHolders = null;
+        }
+        if(mViewHolders != null){
+            mViewHolders.clear();
+            mViewHolders = null;
+        }
     }
 
     @Override
@@ -243,21 +309,23 @@ public class ParallaxSupportView extends FrameLayout {
             mViewHolders.clear();
         }
 
-        for (int i = 0; i < mProvider.getItemCount(); i++) {
+        if(mCopyHolders != null){
+            mCopyHolders.clear();
+        }
 
-            ViewHolder viewHolder = mProvider.createViewHolder(i);
+        if(mViewHolders == null){
+            mViewHolders = new SparseArray<>();
+        }
 
+        for (int type = 0; type < mProvider.getItemTypeCount(); type ++ ){
+            ViewHolder viewHolder = mProvider.createViewHolder(type);
             if(mViewHolders == null){
                 mViewHolders = new SparseArray<>();
             }
 
-            mViewHolders.put(i, viewHolder);
-
-            if(viewHolder != null){
-                this.addView(viewHolder.itemView);
-            }
-
+            mViewHolders.put(type, viewHolder);
         }
+
         mHandler.post(mSwapImageRunnable);
     }
 
