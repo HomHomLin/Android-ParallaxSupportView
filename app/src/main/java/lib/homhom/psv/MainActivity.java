@@ -28,7 +28,13 @@ public class MainActivity extends AppCompatActivity {
         mParallaxSupportView = (ParallaxSupportView) findViewById(R.id.parallaxSv);
         ParallaxProvider provider = new ParallaxProvider();
         mParallaxSupportView.setProvider(provider);
-        provider.notifyDataSetChanged();
+        mParallaxSupportView.setAnimInterceptor(new ParallaxSupportView.AnimInterceptor() {
+            @Override
+            public boolean anim(View view) {
+                return false;
+            }
+        });
+//        provider.notifyDataSetChanged();
     }
 
     class ParallaxProvider extends ParallaxSupportView.ParallaxSupportViewProvider<ParallaxProvider.ViewHolder>{
