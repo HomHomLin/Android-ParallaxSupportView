@@ -6,7 +6,7 @@
 
     <homhomlib.lib.parallax.sv.ParallaxSupportView
         android:id="@+id/parallaxSv"
-        android:layout_width="250dp"
+        android:layout_width="match_parent"
         android:layout_height="250dp"
         android:layout_centerInParent="true"/>
 </RelativeLayout>
