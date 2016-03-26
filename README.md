@@ -6,6 +6,9 @@ Project site： <https://github.com/HomHomLin/Android-ParallaxSupportView>.
 
 最新版本:v1.0.0
 
+
+![p1](https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/demo.gif)
+
 ## 支持平台
 
 API 9+
@@ -32,7 +35,9 @@ or
 
 ParallaxSupportView目前需要以下依赖：
 
+``` groovy
 compile 'com.nineoldandroids:library:2.4.0'
+```
 
 ## 用法
 
