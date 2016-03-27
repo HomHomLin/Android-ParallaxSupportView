@@ -156,6 +156,11 @@ public class ParallaxSupportView extends FrameLayout {
         }
     };
 
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+    }
+
     private void swapImage() {
 
         if(mProvider == null){
