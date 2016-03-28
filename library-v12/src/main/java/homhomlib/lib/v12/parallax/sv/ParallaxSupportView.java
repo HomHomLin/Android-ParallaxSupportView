@@ -1,4 +1,4 @@
-package homhomlib.lib.v9.parallax.sv;
+package homhomlib.lib.v12.parallax.sv;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewPropertyAnimator;
 import android.widget.FrameLayout;
 
 import java.util.Random;
