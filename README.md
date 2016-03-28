@@ -15,6 +15,8 @@ API 9+
 
 ## 导入项目
 
+**API 9+：
+
 **Gradle dependency:**
 ``` groovy
 compile 'homhomlin.lib:psv-library:1.0.0'
@@ -31,13 +33,33 @@ or
 </dependency>
 ```
 
+**API 12+：
+
+**Gradle dependency:**
+``` groovy
+compile 'homhomlin.lib.v12:psv-library:1.0.0'
+```
+
+or
+
+**Maven dependency:**
+``` xml
+<dependency>
+  <groupId>homhomlin.lib.v12</groupId>
+  <artifactId>psv-library</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
 ## 依赖
 
-ParallaxSupportView目前需要以下依赖：
+如果你使用的是API 9+的ParallaxSupportView，需要以下依赖：
 
 ``` groovy
 compile 'com.nineoldandroids:library:2.4.0'
 ```
+
+API 12+的ParallaxSupportView不需要依赖。
 
 ## 用法
 

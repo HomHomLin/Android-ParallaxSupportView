@@ -35,4 +35,6 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
 
     compile 'homhomlin.lib:psv-library:1.0.0'
+
+    compile 'homhomlin.lib.v12:psv-library:1.0.0'
 }
