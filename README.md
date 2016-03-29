@@ -1,6 +1,6 @@
 # Android-ParallaxSupportView
 
-Android-ParallaxSupportView是一种Android平台的动态视觉差控件，支持N个任意View的视觉差效果，支持最低API 9。
+Android-ParallaxSupportView是一种Android平台的动态视觉差控件，支持N个任意View的视觉差效果，支持最低API v9。
 
 Project site： <https://github.com/HomHomLin/Android-ParallaxSupportView>.
 
@@ -11,11 +11,11 @@ Project site： <https://github.com/HomHomLin/Android-ParallaxSupportView>.
 
 ## 支持平台
 
-API 9+
+API v9+
 
 ## 导入项目
 
-**API 9+：
+**API v9+:**
 
 **Gradle dependency:**
 ``` groovy
@@ -33,7 +33,7 @@ or
 </dependency>
 ```
 
-**API 12+：
+**API v12+:**
 
 **Gradle dependency:**
 ``` groovy
@@ -53,13 +53,13 @@ or
 
 ## 依赖
 
-如果你使用的是API 9+的ParallaxSupportView，需要以下依赖：
+如果你使用的是API v9+的ParallaxSupportView，需要以下依赖：
 
 ``` groovy
 compile 'com.nineoldandroids:library:2.4.0'
 ```
 
-API 12+的ParallaxSupportView不需要依赖。
+使用API v12+的ParallaxSupportView不需要依赖。
 
 ## 用法
 
