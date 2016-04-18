@@ -4,7 +4,7 @@ Android-ParallaxSupportView是一种Android平台的动态视觉差控件，支�
 
 Project site： <https://github.com/HomHomLin/Android-ParallaxSupportView>.
 
-最新版本:v1.0.0
+最新版本:v1.0.1
 
 
 ![p1](https://raw.githubusercontent.com/HomHomLin/Android-ParallaxSupportView/master/TestPic/demo.gif)
@@ -19,7 +19,7 @@ API v9+
 
 **Gradle dependency:**
 ``` groovy
-compile 'homhomlin.lib:psv-library:1.0.0'
+compile 'homhomlin.lib:psv-library:1.0.1'
 ```
 
 or
@@ -29,7 +29,7 @@ or
 <dependency>
   <groupId>homhomlin.lib</groupId>
   <artifactId>psv-library</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
@@ -37,7 +37,7 @@ or
 
 **Gradle dependency:**
 ``` groovy
-compile 'homhomlin.lib.v12:psv-library:1.0.0'
+compile 'homhomlin.lib.v12:psv-library:1.0.1'
 ```
 
 or
@@ -47,7 +47,7 @@ or
 <dependency>
   <groupId>homhomlin.lib.v12</groupId>
   <artifactId>psv-library</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 
