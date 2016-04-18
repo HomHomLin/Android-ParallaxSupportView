@@ -19,16 +19,15 @@ import java.util.Random;
  * Created by Linhh on 16/3/22.
  */
 public class ParallaxSupportView extends FrameLayout {
-
     private final Random mRandom = new Random();
-    private final Handler mHandler;
+//    private final Handler mHandler;
 
     private final ParallaxSupportViewDataObserver mObserver = new ParallaxSupportViewDataObserver();
 
     private int mIndex = 0;
 
-    private SparseArray<ViewHolder> mViewHolders;
-    private SparseArray<ViewHolder> mCopyHolders;
+    private final SparseArray<ViewHolder> mViewHolders = new SparseArray<>();
+    private final SparseArray<ViewHolder> mCopyHolders = new SparseArray<>();
 
     private boolean mIsAttachedToWindow = false;
 
@@ -122,7 +121,6 @@ public class ParallaxSupportView extends FrameLayout {
 
     public ParallaxSupportView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mHandler = new Handler();
     }
 
     public void setProvider(ParallaxSupportViewProvider provider){
@@ -152,7 +150,7 @@ public class ParallaxSupportView extends FrameLayout {
         @Override
         public void run() {
             swapImage();
-            mHandler.postDelayed(mParallaxImageRunnable, mParallaxDuration - mFadeDuration * 2);
+            ParallaxSupportView.this.postDelayed(mParallaxImageRunnable, mParallaxDuration - mFadeDuration * 2);
         }
     };
 
@@ -182,9 +180,6 @@ public class ParallaxSupportView extends FrameLayout {
             mProvider.bindViewHolder(viewHolder, mIndex);
             this.addView(viewHolder.itemView);
         }else{
-            if(mCopyHolders == null){
-                mCopyHolders = new SparseArray<>();
-            }
             ViewHolder copy_viewHolder = mCopyHolders.get(type);
             if(copy_viewHolder == null){
                 copy_viewHolder = mProvider.createViewHolder(type);
@@ -301,15 +296,23 @@ public class ParallaxSupportView extends FrameLayout {
         release();
     }
 
-    private void release(){
-        mHandler.removeCallbacks(mParallaxImageRunnable);
+    private void release() {
+        mAnimInterceptor = null;
+        mProvider = null;
+        this.removeCallbacks(mParallaxImageRunnable);
         if(mCopyHolders != null){
+            for(int i = 0; i < mCopyHolders.size(); i ++){
+                mCopyHolders.get(i).itemView.clearAnimation();
+            }
             mCopyHolders.clear();
-            mCopyHolders = null;
+//            mCopyHolders = null;
         }
         if(mViewHolders != null){
+            for(int i = 0; i < mViewHolders.size(); i ++){
+                mViewHolders.get(i).itemView.clearAnimation();
+            }
             mViewHolders.clear();
-            mViewHolders = null;
+//            mViewHolders = null;
         }
     }
 
@@ -321,7 +324,7 @@ public class ParallaxSupportView extends FrameLayout {
 
     private void viewsInvalid() {
 
-        mHandler.removeCallbacks(mParallaxImageRunnable);
+        this.removeCallbacks(mParallaxImageRunnable);
 
         if(this.getChildCount() > 0){
             this.removeAllViews();
@@ -339,20 +342,12 @@ public class ParallaxSupportView extends FrameLayout {
             mCopyHolders.clear();
         }
 
-        if(mViewHolders == null){
-            mViewHolders = new SparseArray<>();
-        }
-
         for (int type = 0; type < mProvider.getItemTypeCount(); type ++ ){
             ViewHolder viewHolder = mProvider.createViewHolder(type);
-            if(mViewHolders == null){
-                mViewHolders = new SparseArray<>();
-            }
-
             mViewHolders.put(type, viewHolder);
         }
 
-        mHandler.post(mParallaxImageRunnable);
+        this.post(mParallaxImageRunnable);
     }
 
     public static abstract class AdapterDataObserver {

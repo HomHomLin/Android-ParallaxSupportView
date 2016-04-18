@@ -149,6 +149,7 @@ public class ParallaxSupportView extends FrameLayout {
         @Override
         public void run() {
             swapImage();
+            ParallaxSupportView.this.postDelayed(mParallaxImageRunnable, mParallaxDuration - mFadeDuration * 2);
         }
     };
 
@@ -211,8 +212,6 @@ public class ParallaxSupportView extends FrameLayout {
                 ObjectAnimator.ofFloat(newView, "alpha", 0.0F, 1.0F)
         );
         animatorSet.start();
-
-        this.postDelayed(mParallaxImageRunnable, mParallaxDuration - mFadeDuration * 2);
 
     }
 
