@@ -261,11 +261,11 @@ public class ParallaxSupportView extends FrameLayout {
                 .setDuration(duration);
     }
 
-    private float pickScale() {
+    public final float pickScale() {
         return mMinScaleSize + mRandom.nextFloat() * (mMaxScaleSize - mMinScaleSize);
     }
 
-    private float pickTranslation(int value, float ratio) {
+    public final float pickTranslation(int value, float ratio) {
         return value * (ratio - 1.0F) * (mRandom.nextFloat() - 0.5F);
     }
 
@@ -296,6 +296,10 @@ public class ParallaxSupportView extends FrameLayout {
 //            toTranslationY = 40;
 //        }
         startParallax(view, mParallaxDuration - mFadeDuration * 2, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
+    }
+
+    public int getAnimDuration(){
+        return mParallaxDuration - mFadeDuration * 2;
     }
 
     @Override

@@ -32,7 +32,15 @@ public class MainActivity extends AppCompatActivity {
         mParallaxSupportView.setAnimInterceptor(new ParallaxSupportView.AnimInterceptor() {
             @Override
             public boolean anim(View view) {
-                return false;
+                float fromScale = mParallaxSupportView.pickScale();
+                float toScale = mParallaxSupportView.pickScale();
+                view.setScaleX(fromScale);
+                view.setScaleY(fromScale);
+                view.animate()
+                        .scaleX(toScale)
+                        .scaleY(toScale)
+                        .setDuration(mParallaxSupportView.getAnimDuration());
+                return true;
             }
         });
 //        provider.notifyDataSetChanged();
