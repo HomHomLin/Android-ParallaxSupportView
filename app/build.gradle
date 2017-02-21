@@ -24,9 +24,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
 
-//    compile project(':library')
+    compile project(':library')
 
-//    compile project(':library-v12')
+    compile project(':library-v12')
 
     compile 'homhomlin.lib:frescoimageview:1.3.0'
 
@@ -34,7 +34,7 @@ dependencies {
 
     compile 'com.nineoldandroids:library:2.4.0'
 
-    compile 'homhomlin.lib:psv-library:1.0.1'
-
-    compile 'homhomlin.lib.v12:psv-library:1.0.1'
+//    compile 'homhomlin.lib:psv-library:1.0.1'
+//
+//    compile 'homhomlin.lib.v12:psv-library:1.0.1'
 }

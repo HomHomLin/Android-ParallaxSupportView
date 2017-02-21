@@ -149,7 +149,7 @@ public class ParallaxSupportView extends FrameLayout {
         @Override
         public void run() {
             swapImage();
-            ParallaxSupportView.this.postDelayed(mParallaxImageRunnable, mParallaxDuration - mFadeDuration * 2);
+            ParallaxSupportView.this.postDelayed(mParallaxImageRunnable, mParallaxDuration);
         }
     };
 
@@ -203,6 +203,15 @@ public class ParallaxSupportView extends FrameLayout {
         }
 
         newView.setAlpha(0.0F);
+//        oldView.setAlpha(1.0F);
+//
+//        newView.animate()
+//                .alpha(1.0F)
+//                .setDuration(mFadeDuration);
+//        oldView.animate()
+//                .alpha(0.0F)
+//                .setDuration(mFadeDuration);
+
         animate(newView);
 
         AnimatorSet animatorSet = new AnimatorSet();
@@ -286,7 +295,7 @@ public class ParallaxSupportView extends FrameLayout {
 //        if(toTranslationY == 0){
 //            toTranslationY = 40;
 //        }
-        startParallax(view, mParallaxDuration, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
+        startParallax(view, mParallaxDuration - mFadeDuration * 2, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
     }
 
     @Override

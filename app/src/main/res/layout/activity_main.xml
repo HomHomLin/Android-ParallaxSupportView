@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <homhomlib.lib.parallax.sv.ParallaxSupportView
+    <homhomlib.lib.v12.parallax.sv.ParallaxSupportView
         android:id="@+id/parallaxSv"
         android:layout_width="match_parent"
         android:layout_height="250dp"

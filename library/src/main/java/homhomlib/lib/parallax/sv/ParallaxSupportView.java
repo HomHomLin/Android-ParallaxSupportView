@@ -4,10 +4,12 @@ import android.content.Context;
 import android.database.Observable;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
@@ -150,7 +152,7 @@ public class ParallaxSupportView extends FrameLayout {
         @Override
         public void run() {
             swapImage();
-            ParallaxSupportView.this.postDelayed(mParallaxImageRunnable, mParallaxDuration - mFadeDuration * 2);
+            ParallaxSupportView.this.postDelayed(mParallaxImageRunnable, mParallaxDuration);
         }
     };
 
@@ -200,16 +202,52 @@ public class ParallaxSupportView extends FrameLayout {
             return;
         }
 
-        ViewHelper.setAlpha(newView, 0.0F);
-        animate(newView);
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.setDuration(mFadeDuration);
-        animatorSet.playTogether(
-                ObjectAnimator.ofFloat(oldView, "alpha", 1.0F, 0.0F),
-                ObjectAnimator.ofFloat(newView, "alpha", 0.0F, 1.0F)
-        );
-        animatorSet.start();
+        animate(newView);
+        ViewHelper.setAlpha(newView, 0.0F);
+        ViewHelper.setAlpha(oldView, 1.0F);
+
+        ViewPropertyAnimator new_propertyAnimator = ViewPropertyAnimator
+                .animate(newView)
+                .alpha(1.0F)
+                .setDuration(mFadeDuration);
+
+        new_propertyAnimator.start();
+
+        ViewPropertyAnimator old_propertyAnimator = ViewPropertyAnimator
+                .animate(oldView)
+                .alpha(0.0F)
+                .setDuration(mFadeDuration);
+
+        old_propertyAnimator.start();
+//        AnimatorSet animatorSet = new AnimatorSet();
+//        animatorSet.setDuration(mFadeDuration);
+//        animatorSet.playTogether(
+//                ObjectAnimator.ofFloat(oldView, "alpha", 1.0F, 0.0F),
+//                ObjectAnimator.ofFloat(newView, "alpha", 0.0F, 1.0F)
+//        );
+//        animatorSet.addListener(new Animator.AnimatorListener() {
+//            @Override
+//            public void onAnimationStart(Animator animation) {
+//                Log.d("anim-psv","start");
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                Log.d("anim-psv","over");
+//            }
+//
+//            @Override
+//            public void onAnimationCancel(Animator animation) {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animator animation) {
+//
+//            }
+//        });
+//        animatorSet.start();
     }
 
     public void setFadeDuration(int duration){
@@ -286,7 +324,7 @@ public class ParallaxSupportView extends FrameLayout {
 //        if(toTranslationY == 0){
 //            toTranslationY = 40;
 //        }
-        startParallax(view, mParallaxDuration, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
+        startParallax(view, mParallaxDuration - 2 * mFadeDuration, fromScale, toScale, fromTranslationX, fromTranslationY, toTranslationX, toTranslationY);
     }
 
     @Override

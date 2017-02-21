@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import homhomlib.lib.parallax.sv.ParallaxSupportView;
+import homhomlib.lib.v12.parallax.sv.ParallaxSupportView;
 import lib.lhh.fiv.library.FrescoImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         mParallaxSupportView = (ParallaxSupportView) findViewById(R.id.parallaxSv);
         ParallaxProvider provider = new ParallaxProvider();
         mParallaxSupportView.setProvider(provider);
+        mParallaxSupportView.setFadeDuration(2000);
         mParallaxSupportView.setAnimInterceptor(new ParallaxSupportView.AnimInterceptor() {
             @Override
             public boolean anim(View view) {
